@@ -1,4 +1,5 @@
 import express from 'express'
+import './config/dotenv.js'
 import planetsRouter from './routes/planets.js'
 
 // Initialize Express app

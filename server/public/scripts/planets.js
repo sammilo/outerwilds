@@ -36,7 +36,7 @@ const renderPlanets = async () => {
             const link = document.createElement('a')
             link.textContent = 'Learn More >'
             link.setAttribute('role', 'button')
-            link.href = `/planets/${planet.id}`
+            link.href = `/planet.html?id=${planet.id}`
             bottomContainer.appendChild(link)
 
             card.appendChild(topContainer)
@@ -52,29 +52,21 @@ const renderPlanets = async () => {
     }
 }
 
-const requestedUrl = window.location.href.split('/').pop()
-if (requestedUrl) {
-    window.location.href = '../404.html'
-}
-else {
-    renderGifts()
-}
-
-const renderPLanet = async () => {
-    const requestedID = parseInt(window.location.href.split('/').pop())
-    const response = await fetch(`/planets/${requestedID}`) // CHECK
+const renderPlanet = async () => {
+    const requestedID = parseInt(new URLSearchParams(window.location.search).get('id'))
+    const response = await fetch('/planets')
     const data = await response.json()
 
     const planetContent = document.getElementById('planet-content')
-    let planet 
+    const planet = data.find(p => p.id === requestedID)
 
     if (planet) {
-        planet = data.find(planet => planet.id === requestedID)
-        document.querySelector('title').textContent = planet.name
-        document.querySelector('description').textContent = planet.description
-        document.querySelector('gravity').textContent = 'Gravity: ' + planet.gravity
-        document.querySelector('danger').textContent = 'Danger Level: ' + planet.danger
-        document.querySelector('planet-image').src = planet.image
+        document.title = planet.name
+        document.getElementById('name').textContent = planet.name
+        document.getElementById('description').textContent = planet.description
+        document.getElementById('gravity').textContent = 'Gravity: ' + planet.gravity
+        document.getElementById('danger').textContent = 'Danger Level: ' + planet.danger
+        document.getElementById('image').src = planet.image
     }
     else {
         const message = document.createElement('h2')
@@ -83,4 +75,8 @@ const renderPLanet = async () => {
     }
 }
 
-renderPLanet()
+if (document.getElementById('main-content')) {
+    renderPlanets()
+} else if (document.getElementById('planet-content')) {
+    renderPlanet()
+}
